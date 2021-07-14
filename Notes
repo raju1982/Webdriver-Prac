@@ -44,12 +44,12 @@ Element Locator -
 
 
 Dropdown -
-    private Select findDropDownElement(){
-        return new Select(driver.findElement(dropdown));
-    }
-
-    findDropDownElement().selectByVisibleText(option);
+    WebElement dropdown = new Select(driver.findElement(dropdown));
+    String option = "Option 1";
+    dropdown.selectByVisibleText(option);
     List<WebElement> selectedElements = findDropDownElement().getAllSelectedOptions();
+    dropdown.deselectByVisibleText(option);
+
 
 
 KeysTests -
@@ -60,6 +60,11 @@ KeysTests -
     public void enterText(String text){
        driver.findElement(inputField).sendKeys(text);
     }
+
+//sending tabs to input field
+WebElement inputField = driver.findElement(By.Locator("LocatorValue"));
+inputField.sendKeys(Keys.TAB);
+
 
 Alert -
 driver.findElement(triggerAlertButton).click();
@@ -78,6 +83,10 @@ private String editorIframeId = "mce_0_ifr";
 driver.switchTo().frame(editorIframeId)
 driver.switchTo().parentFrame();
 
+how to locate frame - By Index , By Name or Id
+
+
+
 
 
 Type of Wait -
@@ -89,8 +98,11 @@ Explicit Wait -
         WebDriverWait wait = new WebDriverWait(driver, 5);
         wait.until(ExpectedConditions.invisibilityOf(
                 driver.findElement(loadingIndicator)));
+        wait.until(ExpectedConditions.elementToBeClickable (
+                By.id("cancelRegister")));
 
-FLUENT WAIT -
+
+FLUENT WAIT [explicit wait] -
 //        FluentWait wait = new FluentWait(driver)
 //                .withTimeout(Duration.ofSeconds(5))
 //                .pollingEvery(Duration.ofSeconds(1))
@@ -120,22 +132,6 @@ add below code in the base class (beforeClass method)
 WebDriver driver = new ChromeDriver();
 driver.manage().timeouts().pageLoadTimeout(40, TimeUnit.SECONDS);
 
-
-
-
-How you execute Javascript -
-        //scroll to an element
-        WebElement tableElement = driver.findElement(table);
-        String script = "arguments[0].scrollIntoView();";
-        ((JavascriptExecutor)driver).executeScript(script, tableElement);
-
-        //scroll to an element which is not yet present in page (DOM)
-        String script = "window.scrollTo(0, document.body.scrollHeight)";
-        var jsExecutor = (JavascriptExecutor)driver;
-
-        while(getNumberOfParagraphsPresent() < index){
-            jsExecutor.executeScript(script);
-        }
 
 
 How you handle Navigation's -
@@ -207,12 +203,15 @@ Right CLick ->
 Actions actions = new Actions(driver);
 actions.contextClick(driver.findElement(hotSpot)).perform();
 
-Actions actions = new Actions(driver);
-// Scroll Down using Actions class
-actions.keyDown(Keys.CONTROL).sendKeys(Keys.END).perform();
-// Scroll Up using Actions class
-actions.keyDown(Keys.CONTROL).sendKeys(Keys.HOME).perform();
+//scroll down a page
+actions.sendKeys(Keys.PAGE_DOWN).build().perform();
+//scroll up a page
+actions.sendKeys(Keys.PAGE_UP).build().perform();
 
+actions.singleClick(WebElement).perform();
+actions.doubleClick(WebElement).perform();
+actions.moveToElement(figure).click();
+actions.moveToElement(figure).doubleClick();
 
 
 
@@ -246,7 +245,6 @@ Listeners for Selenium WebDriver Event ->
         goHome();
     }
 
-
     public class EventReporter implements WebDriverEventListener {
         @Override
         public void beforeAlertAccept(WebDriver webDriver) {
@@ -254,143 +252,19 @@ Listeners for Selenium WebDriver Event ->
         }
 
         @Override
-        public void afterAlertAccept(WebDriver webDriver) {
-
-        }
-
-        @Override
-        public void afterAlertDismiss(WebDriver webDriver) {
-
-        }
-
-        @Override
-        public void beforeAlertDismiss(WebDriver webDriver) {
-
-        }
-
-        @Override
-        public void beforeNavigateTo(String s, WebDriver webDriver) {
-
-        }
-
-        @Override
-        public void afterNavigateTo(String s, WebDriver webDriver) {
-
-        }
-
-        @Override
-        public void beforeNavigateBack(WebDriver webDriver) {
-
-        }
-
-        @Override
-        public void afterNavigateBack(WebDriver webDriver) {
-
-        }
-
-        @Override
-        public void beforeNavigateForward(WebDriver webDriver) {
-
-        }
-
-        @Override
-        public void afterNavigateForward(WebDriver webDriver) {
-
-        }
-
-        @Override
-        public void beforeNavigateRefresh(WebDriver webDriver) {
-
-        }
-
-        @Override
-        public void afterNavigateRefresh(WebDriver webDriver) {
-
-        }
-
-        @Override
-        public void beforeFindBy(By by, WebElement webElement, WebDriver webDriver) {
-
-        }
-
-        @Override
-        public void afterFindBy(By by, WebElement webElement, WebDriver webDriver) {
-
-        }
-
-        @Override
         public void beforeClickOn(WebElement webElement, WebDriver webDriver) {
             System.out.println("Clicking on " + webElement.getText());
-        }
-
-        @Override
-        public void afterClickOn(WebElement webElement, WebDriver webDriver) {
-
-        }
-
-        @Override
-        public void beforeChangeValueOf(WebElement webElement, WebDriver webDriver, CharSequence[] charSequences) {
-
-        }
-
-        @Override
-        public void afterChangeValueOf(WebElement webElement, WebDriver webDriver, CharSequence[] charSequences) {
-
-        }
-
-        @Override
-        public void beforeScript(String s, WebDriver webDriver) {
-
-        }
-
-        @Override
-        public void afterScript(String s, WebDriver webDriver) {
-
-        }
-
-        @Override
-        public void beforeSwitchToWindow(String s, WebDriver webDriver) {
-
-        }
-
-        @Override
-        public void afterSwitchToWindow(String s, WebDriver webDriver) {
-
-        }
-
-        @Override
-        public void onException(Throwable throwable, WebDriver webDriver) {
-
-        }
-
-        @Override
-        public <X> void beforeGetScreenshotAs(OutputType<X> outputType) {
-
-        }
-
-        @Override
-        public <X> void afterGetScreenshotAs(OutputType<X> outputType, X x) {
-
-        }
-
-        @Override
-        public void beforeGetText(WebElement webElement, WebDriver webDriver) {
-
-        }
-
-        @Override
-        public void afterGetText(WebElement webElement, WebDriver webDriver, String s) {
-
         }
     }
 
 
 Enhanced the launched chrome browsers ->
 
-    private ChromeOptions getChromeOptions(){
+   private ChromeOptions getChromeOptions(){
         ChromeOptions options = new ChromeOptions();
         options.addArguments("disable-infobars");
         //options.setHeadless(true);
+        option.AddArguments("start-maximized");   <script is use to maximize the browser window in java>
         return options;
     }
 
@@ -404,8 +278,15 @@ Enhanced the launched chrome browsers ->
 
 
 
+Cookie cookie = new Cookie.Builder("tau", "123")
+                .domain("the-internet.herokuapp.com")
+                .build();
+driver.manage().addCookie(cookie);
 
-
+Set<Cookie> tmp = driver.manage().getAllCookies();
+driver.manage().getCookieNamed("")
+driver.manage().deleteAllCookies();
+driver.manage().deleteCookieNamed("")
 
 
 
@@ -497,14 +378,6 @@ assertTrue(selectedOptions.contains(option), "Option not selected");
 
 
 
-
-
-
-
-
-
-
-
 ===============================================
 Web-element-locator-strategies -
 
@@ -518,12 +391,6 @@ Browser creates DOM of HTML documents.
 
 ================================
 
-//sending tabs to input field
-WebElement inputField = driver.findElement(By.Locator("LocatorValue"));
-inputField.sendKeys(Keys.TAB);
-
-
-
 WebElement.Clear -
 It is used for clearing the existing data but it is not able to clear where auto complete is turned on.
 In that case we can use JavaScript Executor to turn off the autocomplete attribute and then try Clear command
@@ -536,13 +403,7 @@ Page Load Timeout
 
 driver.getWindowHandle() -> which function gets the current window handle of web browser in java
 
-following script is use to maximize the browser window in java -
 
-driver.manage().window().maximize()
-
-ChromeOptions options = new ChromeOptions();
-option.AddArguments("start-maximized");
-WebDriver driver = new ChromeDriver(option);
 
 WebElement.getAttribute("type") -> how to get control type of an element
 
@@ -554,9 +415,7 @@ driver.manage().timeouts().setScriptTimeout(10, TimeUnit.SECONDS); -> This is us
 
 ================================
 
-Navigate to URL Using JavaScript
-((JavascriptExecutor)driver).executeScript("window.location = \'"+url+"\'");
-
+How you execute Javascript -
 
         //scroll to an element
         WebElement tableElement = driver.findElement(table);
@@ -565,11 +424,25 @@ Navigate to URL Using JavaScript
 
         //scroll to an element which is not yet present in page (DOM)
         String script = "window.scrollTo(0, document.body.scrollHeight)";
+        var jsExecutor = (JavascriptExecutor)driver;
 
+        while(getNumberOfParagraphsPresent() < index){
+            jsExecutor.executeScript(script);
+        }
+
+js.executeScript("document.getElementById('user_email_login').value='rbc@xyz.com';");
+js.executeScript("document.getElementById('user_submit').click();")
+
+Using JS to enter text
+String js = "arguments[0].setAttribute('value','"+inputText+"')"
+((JavascriptExecutor) webDriver).executeScript(js, element);
+
+
+Navigate to URL Using JavaScript
+((JavascriptExecutor)driver).executeScript("window.location = \'"+url+"\'");
 
 How to get the title of the page without using WebDriver getTitle function?
 String sText = js.executeScript("return document.title;").toString(); where js is an object of JavaScript Executor
-
 
 
 How to hover on an element having class property as 'inputtext' , tagname as input and controltype as text using jQuery in Javascript Executor?
@@ -584,7 +457,7 @@ JS.executeScript("document.getElementById('User').setAttribute('value', 'Abha')"
 
 How to get all the links of page using Xpath?
 //a
-
+driver.findElements(By.tagName("a"));
 
 
 Which XPath function is used for trimming left and right spaces of a text?
@@ -600,8 +473,35 @@ use relative XPATH to find all frames. then in each frame look for the element
 
 
 
-Boolean isSelected(): This method determines if an element is selected or not. It returns true if the element is selected and false if it is not.  It is widely used on check boxes, radio buttons and options in a select.
-Boolean isDisplayed(): This method determines  if an element is displayed or not. It returns true if the element is displayed and false if it is not.
-Boolean isEnabled(): isEnabled() checks for the disabled attribute on the button element. If the attribute "disabled" is not present, it returns True
+webElement.isSelected(): This method determines if an element is selected or not. It returns true if the element is selected and false if it is not.
+It is widely used on check boxes, radio buttons and options in a select.
+webElement.isDisplayed(): This method determines  if an element is displayed or not. It returns true if the element is displayed and false if it is not.
+webElement.isEnabled(): isEnabled() checks for the disabled attribute on the button element. If the attribute "disabled" is not present, it returns True
+webElement.getText() :- this will fetch the text written over element.
+WebElement.getAttribute("attributeName") -> we can find value of different attributes(name, class, value) of element
 
 
+driver.close() method shall close the browser which is in focus.
+driver.quit() quit() method closes all the browsers.
+
+
+how to handle multiple Windows -
+String mainWindowHandle = driver.getWindowHandle();
+Set<String> allWindowHandles = driver.getWindowHandles();
+driver.switchTo().window(ChildWindow);
+
+
+How to refresh web page -
+WebDriver.Navigation.refresh();
+driver.get("https://the-internet.herokuapp.com/");
+WebDriver.Navigation.to(url);
+
+driver.getTitle()      -> fetch page title
+driver.getPageSource() -> fetch the page source
+
+Common exception -
+NoSuchElementException - when no element could be located by the locator provided.
+WebDriverException -
+IllegalStateException -
+InvalidElementStateException -
+ElementNotVisibleException-
