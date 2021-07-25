@@ -4,6 +4,8 @@ import com.google.common.io.Files;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterClass;
@@ -19,14 +21,26 @@ import java.io.IOException;
 
 public class BaseTests {
 
-    private EventFiringWebDriver driver;
+    //private EventFiringWebDriver driver;
+    private WebDriver driver;
     protected HomePage homePage;
 
     @BeforeClass
     public void setUp(){
-        System.setProperty("webdriver.chrome.driver", "resources/chromedriver");
-        driver = new EventFiringWebDriver(new ChromeDriver(getChromeOptions()));
-        driver.register(new EventReporter());
+        String browser = System.getProperty("browser", "chrome");
+        if(browser.equalsIgnoreCase("chrome")) {
+            System.setProperty("webdriver.chrome.driver", "resources/chromedriver");
+            driver = new ChromeDriver(getChromeOptions());
+        }
+        else if(browser.equalsIgnoreCase("safari")){
+            driver = new SafariDriver();
+        }
+        else if(browser.equalsIgnoreCase("firefox")){
+            System.setProperty("webdriver.gecko.driver", "resources/geckodriver");
+            driver = new FirefoxDriver();
+        }
+        //driver.register(new EventReporter());
+        driver.manage().window().maximize();
         goHome();
         //setCookie();
     }

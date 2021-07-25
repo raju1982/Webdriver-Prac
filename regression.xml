@@ -1,0 +1,10 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+
+<suite name="Regression Test Suite" parallel="methods" thread-count="1">
+    <test name="Regression Test">
+        <classes>
+            <class name="login.LoginTests"/>
+            <class name="dropdown.DropdownTests"/>
+        </classes>
+    </test>
+</suite>

@@ -47,7 +47,7 @@ Dropdown -
     WebElement dropdown = new Select(driver.findElement(dropdown));
     String option = "Option 1";
     dropdown.selectByVisibleText(option);
-    List<WebElement> selectedElements = findDropDownElement().getAllSelectedOptions();
+    List<WebElement> selectedElements = dropdown.getAllSelectedOptions();
     dropdown.deselectByVisibleText(option);
 
 
@@ -140,37 +140,16 @@ How you handle Navigation's -
     private WebDriver driver;
     private WebDriver.Navigation navigate;
 
-    public WindowManager(WebDriver driver){
-        this.driver = driver;
-        navigate = driver.navigate();
-    }
+    navigate = driver.navigate();
+    navigate.back();
+    navigate.forward();
+    navigate.refresh();
+    navigate.to(url);
 
-    public void goBack(){
-        navigate.back();
-    }
-
-    public void goForward(){
-        navigate.forward();
-    }
-
-    public void refreshPage(){
-        navigate.refresh();
-    }
-
-    public void goTo(String url){
-        navigate.to(url);
-    }
 
 
 How you handle tabs -
-    public void switchToTab(String tabTitle){
             Set<String> windows = driver.getWindowHandles();
-
-            System.out.println("Number of tabs: " + windows.size());
-
-            System.out.println("Window handles:");
-            windows.forEach(System.out::println);
-
             for(String window : windows){
                 System.out.println("Switching to window: " + window);
                 driver.switchTo().window(window);
@@ -193,11 +172,11 @@ Hover -
     actions.moveToElement(figure).perform();
 
 //Actions class method to drag and drop
-Actions builder = new Actions(driver);
+Actions actions = new Actions(driver);
 WebElement from = driver.findElement(By.id("column-a "));
 WebElement to = driver.findElement(By.id("column-b"));
 //Perform drag and drop
-builder.dragAndDrop(from, to).perform();
+actions.dragAndDrop(from, to).perform();
 
 Right CLick ->
 Actions actions = new Actions(driver);
@@ -482,7 +461,7 @@ WebElement.getAttribute("attributeName") -> we can find value of different attri
 
 
 driver.close() method shall close the browser which is in focus.
-driver.quit() quit() method closes all the browsers.
+driver.quit()  method closes all the browsers.
 
 
 how to handle multiple Windows -
@@ -505,3 +484,13 @@ WebDriverException -
 IllegalStateException -
 InvalidElementStateException -
 ElementNotVisibleException-
+
+
+system variable will pass the browser name -
+
+Delete cookies in the before class method -> driver.manage().deleteAllCookies();
+
+
+
+mvn clean test -DsuiteXmlFile=regression.xml
+mvn clean test -DsuiteXmlFile=regression.xml -Dbrowser=firefox
